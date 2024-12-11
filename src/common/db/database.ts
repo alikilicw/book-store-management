@@ -1,3 +1,4 @@
+import { UserEntity } from 'src/user/user.entity'
 import { Constants } from '../constants.config'
 import { DataSource, DataSourceOptions } from 'typeorm'
 
@@ -8,7 +9,7 @@ export const dataSourceOptions: DataSourceOptions = {
     username: Constants.DB_USERNAME,
     password: Constants.DB_PASSWORD,
     database: Constants.DB_NAME,
-    entities: [],
+    entities: [UserEntity],
     synchronize: true
 }
 
