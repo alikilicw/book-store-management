@@ -60,14 +60,22 @@ export class UserService {
             .getOne()
 
         if (existingUser) {
-            if (existingUser.username === createUserDto.username) {
-                throw new BadRequestException('Username is already in use.')
-            }
-            if (existingUser.email === createUserDto.email) {
-                throw new BadRequestException('Email is already in use.')
-            }
-            if (existingUser.phone === createUserDto.phone) {
-                throw new BadRequestException('Phone is already in use.')
+            if (existingUser.isActive) {
+                if (existingUser.username === createUserDto.username) {
+                    throw new BadRequestException('Username is already in use.')
+                }
+                if (existingUser.email === createUserDto.email) {
+                    throw new BadRequestException('Email is already in use.')
+                }
+                if (existingUser.phone === createUserDto.phone) {
+                    throw new BadRequestException('Phone is already in use.')
+                }
+            } else {
+                /*
+                    This may allow third parties to create accounts
+                        with the same username, email, and phone number while creating a user
+                */
+                this.delete(existingUser.id)
             }
         }
 

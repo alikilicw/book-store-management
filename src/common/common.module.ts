@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { JoiValidationPipe } from './pipe/validation.pipe'
+import { JoiValidationPipe } from './pipes/validation.pipe'
 
 @Module({
     providers: [JoiValidationPipe],

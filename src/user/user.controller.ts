@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Param, Body, NotFoundException, Query, UsePipes, Patch, Delete } from '@nestjs/common'
+import { Controller, Get, Post, Param, Body, NotFoundException, Query, UsePipes, Patch, Delete, UseGuards } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UserEntity } from './user.entity'
 import { FindUserDto, UpdateUserDto } from './user.dto'
-import { JoiValidationPipe } from 'src/common/pipe/validation.pipe'
+import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import UserValidation from './user.validation'
 import { ResponseDto } from 'src/common/dto/response.dto'
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard'
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
@@ -13,8 +15,6 @@ export class UserController {
     @Get()
     @UsePipes(new JoiValidationPipe({ querySchema: UserValidation.find }))
     async find(@Query() findUserDto: FindUserDto): Promise<ResponseDto<UserEntity[]>> {
-        console.log('AA')
-
         return {
             data: await this.userService.find(findUserDto)
         }
