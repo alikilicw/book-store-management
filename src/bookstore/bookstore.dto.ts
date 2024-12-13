@@ -1,7 +1,7 @@
-export class CreateBookStoreDto {
+export type CreateBookStoreDto = {
     name: string
 }
 
-export class UpdateBookStoreDto {
+export type UpdateBookStoreDto = {
     name?: string
 }
