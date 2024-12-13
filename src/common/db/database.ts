@@ -1,6 +1,7 @@
 import { UserEntity } from 'src/user/user.entity'
 import { Constants } from '../constants.config'
 import { DataSource, DataSourceOptions } from 'typeorm'
+import { BookStoreEntity } from 'src/bookstore/bookstore.entity'
 
 export const dataSourceOptions: DataSourceOptions = {
     type: 'postgres',
@@ -9,7 +10,7 @@ export const dataSourceOptions: DataSourceOptions = {
     username: Constants.DB_USERNAME,
     password: Constants.DB_PASSWORD,
     database: Constants.DB_NAME,
-    entities: [UserEntity],
+    entities: [UserEntity, BookStoreEntity],
     synchronize: true
 }
 
