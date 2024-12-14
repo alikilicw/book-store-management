@@ -8,6 +8,7 @@ import { AuthModule } from 'src/auth/auth.module'
 @Module({
     imports: [TypeOrmModule.forFeature([BookStoreEntity]), AuthModule],
     controllers: [BookStoreController],
-    providers: [BookStoreService]
+    providers: [BookStoreService],
+    exports: [BookStoreService]
 })
 export class BookstoreModule {}

@@ -49,7 +49,7 @@ export class BookStoreController {
 
     @Delete(':id')
     @UsePipes(new JoiValidationPipe({ paramSchema: BookStoreValidation.id }))
-    async delete(@Param('id') id: number): Promise<void> {
-        return this.bookstoreService.delete(id)
+    async delete(@Param('id') params: { id: number }): Promise<void> {
+        return this.bookstoreService.delete(params.id)
     }
 }

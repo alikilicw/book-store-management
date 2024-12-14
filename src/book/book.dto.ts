@@ -1,11 +1,11 @@
-export type CreateBookDto = {
-    name: string
-    bookStore: number
-    price: number
-}
-
-export type UpdateBookDto = {
+type BookBaseDto = {
     name?: string
-    bookStore?: number
+    bookStoreId?: number
     price?: number
 }
+
+export type CreateBookDto = Required<BookBaseDto>
+
+export type UpdateBookDto = BookBaseDto
+
+export type FindBookDto = BookBaseDto
