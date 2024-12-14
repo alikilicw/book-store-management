@@ -11,6 +11,37 @@ export class UserService {
         private userRepository: Repository<UserEntity>
     ) {}
 
+    async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+        const existingUser = await this.userRepository
+            .createQueryBuilder('user')
+            .where('user.username = :username', { username: createUserDto.username })
+            .orWhere('user.email = :email', { email: createUserDto.email })
+            .orWhere('user.phone = :phone', { phone: createUserDto.phone })
+            .getOne()
+
+        if (existingUser) {
+            if (existingUser.isActive) {
+                if (existingUser.username === createUserDto.username) {
+                    throw new BadRequestException('Username is already in use.')
+                }
+                if (existingUser.email === createUserDto.email) {
+                    throw new BadRequestException('Email is already in use.')
+                }
+                if (existingUser.phone === createUserDto.phone) {
+                    throw new BadRequestException('Phone is already in use.')
+                }
+            } else {
+                /*
+                    This may allow third parties to create accounts
+                        with the same username, email, and phone number while creating a user
+                */
+                this.delete(existingUser.id)
+            }
+        }
+
+        return this.userRepository.create(createUserDto)
+    }
+
     async findAll(): Promise<UserEntity[]> {
         return this.userRepository.find()
     }
@@ -49,37 +80,6 @@ export class UserService {
 
     async findByPhone(phone: string): Promise<UserEntity> {
         return this.userRepository.findOneBy({ phone })
-    }
-
-    async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-        const existingUser = await this.userRepository
-            .createQueryBuilder('user')
-            .where('user.username = :username', { username: createUserDto.username })
-            .orWhere('user.email = :email', { email: createUserDto.email })
-            .orWhere('user.phone = :phone', { phone: createUserDto.phone })
-            .getOne()
-
-        if (existingUser) {
-            if (existingUser.isActive) {
-                if (existingUser.username === createUserDto.username) {
-                    throw new BadRequestException('Username is already in use.')
-                }
-                if (existingUser.email === createUserDto.email) {
-                    throw new BadRequestException('Email is already in use.')
-                }
-                if (existingUser.phone === createUserDto.phone) {
-                    throw new BadRequestException('Phone is already in use.')
-                }
-            } else {
-                /*
-                    This may allow third parties to create accounts
-                        with the same username, email, and phone number while creating a user
-                */
-                this.delete(existingUser.id)
-            }
-        }
-
-        return this.userRepository.create(createUserDto)
     }
 
     async save(user: UserEntity): Promise<UserEntity> {

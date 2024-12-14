@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { BookStoreEntity } from './bookstore.entity'
-import { CreateBookStoreDto, UpdateBookStoreDto } from './bookstore.dto'
+import { CreateBookStoreDto, FindBookStoreDto, UpdateBookStoreDto } from './bookstore.dto'
 
 @Injectable()
 export class BookStoreService {
@@ -12,6 +12,9 @@ export class BookStoreService {
     ) {}
 
     async create(createBookStoreDto: CreateBookStoreDto): Promise<BookStoreEntity> {
+        const bookStoreCheck = await this.findOne({ name: createBookStoreDto.name })
+        if (bookStoreCheck) throw new BadRequestException('There is a book store with this name.')
+
         const bookstore = this.bookstoreRepository.create(createBookStoreDto)
         return this.bookstoreRepository.save(bookstore)
     }
@@ -20,16 +23,42 @@ export class BookStoreService {
         return this.bookstoreRepository.find()
     }
 
-    async findOne(id: number): Promise<BookStoreEntity> {
-        return this.bookstoreRepository.findOne({ where: { id } })
+    async find(findBookStoreDto: FindBookStoreDto): Promise<BookStoreEntity[]> {
+        return this.bookstoreRepository.find({
+            where: findBookStoreDto
+        })
+    }
+
+    async findOne(bookFindDto: FindBookStoreDto): Promise<BookStoreEntity> {
+        const bookStore = await this.bookstoreRepository.findOne({ where: bookFindDto })
+        if (!bookStore) throw new NotFoundException('Book store not found.')
+
+        return bookStore
+    }
+
+    async findById(id: number): Promise<BookStoreEntity> {
+        const bookStore = await this.bookstoreRepository.findOne({ where: { id } })
+        if (!bookStore) throw new NotFoundException('Book store not found.')
+
+        return bookStore
+    }
+
+    async save(bookStore: BookStoreEntity): Promise<BookStoreEntity> {
+        return this.bookstoreRepository.save(bookStore)
     }
 
     async update(id: number, updateBookStoreDto: UpdateBookStoreDto): Promise<BookStoreEntity> {
-        await this.bookstoreRepository.update(id, updateBookStoreDto)
-        return this.bookstoreRepository.findOne({ where: { id } })
+        const bookStore = await this.findById(id)
+        if (!bookStore) throw new NotFoundException('Book store not found.')
+
+        Object.assign(bookStore, updateBookStoreDto)
+        return await this.save(bookStore)
     }
 
-    async remove(id: number): Promise<void> {
+    async delete(id: number): Promise<void> {
+        const bookStore = await this.findById(id)
+        if (!bookStore) throw new NotFoundException('Book store not found.')
+
         await this.bookstoreRepository.delete(id)
     }
 }

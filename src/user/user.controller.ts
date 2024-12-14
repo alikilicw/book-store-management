@@ -41,6 +41,7 @@ export class UserController {
     }
 
     @Delete(':id')
+    @UsePipes(new JoiValidationPipe({ paramSchema: UserValidation.id }))
     async delete(@Param('id') id: number): Promise<void> {
         await this.userService.delete(id)
     }
