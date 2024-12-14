@@ -18,7 +18,7 @@ export type LoginResDto = AuthResBaseDto & {
 export type RegisterReqDto = AuthReqBaseDto & {
     email: string
     gender: Gender
-    role: UserRole
+    role: UserRole[]
     phone: string
 }
 export type RegisterResDto = AuthResBaseDto

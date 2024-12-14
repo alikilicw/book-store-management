@@ -26,8 +26,8 @@ export class UserEntity {
     @Column({ type: 'enum', enum: Gender, default: Gender.UNKNOWN })
     gender: Gender
 
-    @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
-    role: UserRole
+    @Column({ type: 'enum', enum: UserRole, array: true, default: [UserRole.USER] })
+    role: UserRole[]
 
     @Column({ unique: true })
     phone: string

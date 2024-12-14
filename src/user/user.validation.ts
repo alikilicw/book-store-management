@@ -9,8 +9,8 @@ export default class UserValidation extends BaseValidation {
         gender: Joi.string()
             .valid(...Object.values(Gender))
             .optional(),
-        role: Joi.string()
-            .valid(...Object.values(UserRole))
+        role: Joi.array()
+            .items(Joi.string().valid(...Object.values(UserRole)))
             .optional(),
         phone: Joi.string().min(5).max(20).optional()
     })
@@ -21,8 +21,8 @@ export default class UserValidation extends BaseValidation {
         gender: Joi.string()
             .valid(...Object.values(Gender))
             .optional(),
-        role: Joi.string()
-            .valid(...Object.values(UserRole))
+        role: Joi.array()
+            .items(Joi.string().valid(...Object.values(UserRole)))
             .optional(),
         phone: Joi.string().min(5).max(20).optional()
     })

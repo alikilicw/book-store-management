@@ -51,7 +51,7 @@ export class AuthService {
     }
 
     async createToken(user: UserEntity, expiresIn: string): Promise<string> {
-        return sign({ id: user.id, email: user.email }, Constants.ACCESS_TOKEN_SECRET_KEY, { expiresIn })
+        return sign({ id: user.id, username: user.username }, Constants.ACCESS_TOKEN_SECRET_KEY, { expiresIn })
     }
 
     async confirm(user: UserEntity, code: string): Promise<boolean> {

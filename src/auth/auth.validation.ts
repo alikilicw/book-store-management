@@ -9,8 +9,8 @@ export default class AuthValidation {
             .valid(...Object.values(Gender))
             .required(),
         phone: Joi.string().min(5).max(20).required(),
-        role: Joi.string()
-            .valid(...Object.values(UserRole))
+        role: Joi.array()
+            .items(Joi.string().valid(...Object.values(UserRole)))
             .required(),
         password: Joi.string().min(5).max(20).required()
     })
