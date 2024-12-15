@@ -6,7 +6,7 @@ import AuthValidation from './auth.validation'
 import { ResponseDto } from 'src/common/dto/response.dto'
 import { AuthGuard } from '@nestjs/passport'
 import { UserEntity } from 'src/user/user.entity'
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard'
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 
 @Controller('auth')
 export class AuthController {

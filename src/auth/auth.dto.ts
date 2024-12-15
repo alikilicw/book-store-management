@@ -1,4 +1,5 @@
-import { Gender, UserEntity, UserRole } from 'src/user/user.entity'
+import { Gender, UserEntity } from 'src/user/user.entity'
+import { UserRole } from 'src/user/user.entity'
 
 type AuthReqBaseDto = {
     username: string

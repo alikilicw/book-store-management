@@ -5,7 +5,7 @@ import { FindUserDto, UpdateUserDto } from './user.dto'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import UserValidation from './user.validation'
 import { ResponseDto } from 'src/common/dto/response.dto'
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard'
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')

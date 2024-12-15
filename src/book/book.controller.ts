@@ -5,7 +5,7 @@ import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import BookValidation from './book.validation'
 import { ResponseDto } from 'src/common/dto/response.dto'
 import { BookEntity } from './book.entity'
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard'
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 
 @UseGuards(JwtAuthGuard)
 @Controller('books')

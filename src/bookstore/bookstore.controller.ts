@@ -1,13 +1,16 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query, UsePipes, Patch } from '@nestjs/common'
 import { BookStoreService } from './bookstore.service'
 import { CreateBookStoreDto, FindBookStoreDto, UpdateBookStoreDto } from './bookstore.dto'
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth-guard'
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { ResponseDto } from 'src/common/dto/response.dto'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import { BookStoreEntity } from './bookstore.entity'
 import BookStoreValidation from './bookstore.validation'
+import { RolesGuard } from 'src/common/guards/roles.guard'
+import { Roles } from 'src/common/decorators/role.decorator'
+import { UserRole } from 'src/user/user.entity'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('bookstores')
 export class BookStoreController {
     constructor(private readonly bookstoreService: BookStoreService) {}
@@ -21,6 +24,7 @@ export class BookStoreController {
     }
 
     @Get()
+    @Roles(UserRole.ADMIN)
     @UsePipes(new JoiValidationPipe({ querySchema: BookStoreValidation.find }))
     async find(@Query() findBookStoreDto: FindBookStoreDto): Promise<ResponseDto<BookStoreEntity[]>> {
         return {
