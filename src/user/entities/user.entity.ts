@@ -23,7 +23,7 @@ export class UserEntity {
 
     @ManyToMany(() => RoleEntity, (role) => role.users, { eager: true })
     @JoinTable({
-        name: 'user_roles'
+        name: 'user_role'
     })
     roles: RoleEntity[]
 
