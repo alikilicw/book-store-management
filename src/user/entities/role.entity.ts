@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { UserEntity } from './user.entity'
 import { PermissionEntity } from './permission.entity'
 
@@ -13,15 +13,21 @@ export class RoleEntity {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({ unique: true, enum: true })
+    @Column({ unique: true })
     name: string
 
     @ManyToMany(() => UserEntity, (user) => user.roles)
     users: UserEntity[]
 
-    @ManyToMany(() => PermissionEntity, (permission) => permission.roles, { eager: true })
+    @ManyToMany(() => PermissionEntity, (permission) => permission.roles, { eager: false })
     @JoinTable({
         name: 'role_permission'
     })
     permissions: PermissionEntity[]
+
+    @CreateDateColumn()
+    createdAt: Date
+
+    @UpdateDateColumn()
+    updatedAt: Date
 }

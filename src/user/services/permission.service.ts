@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { PermissionEntity, PermissionEnum } from '../entities/permission.entity'
 import { CreatePermissionDto, FindPermissionDto, UpdatePermissionDto } from '../dto/permission.dto'
 
@@ -27,8 +27,15 @@ export class PermissionService {
     }
 
     async find(findPermissionDto: FindPermissionDto): Promise<PermissionEntity[]> {
+        const { ids, ...filters } = findPermissionDto
+
+        const query: any = filters
+        if (ids && ids.length != 0) {
+            query.id = In(ids)
+        }
+
         return this.permissionRepository.find({
-            where: findPermissionDto
+            where: query
         })
     }
 

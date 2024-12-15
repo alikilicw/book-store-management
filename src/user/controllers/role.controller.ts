@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query, Patc
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { ResponseDto } from 'src/common/dto/response.dto'
 import { RoleService } from '../services/role.service'
-import { CreateRoleDto, FindRoleDto, UpdateRoleDto } from '../dto/role.dto'
+import { CreateRoleDto, FindRoleDto, RolePermissionDto, UpdateRoleDto } from '../dto/role.dto'
 import { RoleEntity } from '../entities/role.entity'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import RoleValidation from '../validations/role.validation'
@@ -41,6 +41,28 @@ export class RoleController {
     async update(@Param() params: { id: number }, @Body() updateRoleDto: UpdateRoleDto): Promise<ResponseDto<RoleEntity>> {
         return {
             data: await this.roleService.update(params.id, updateRoleDto)
+        }
+    }
+
+    @Patch(':id/permissions')
+    @UsePipes(new JoiValidationPipe({ paramSchema: RoleValidation.id, bodySchema: RoleValidation.rolePermission }))
+    async addPermissions(
+        @Param() params: { id: number },
+        @Body() rolePermissionDto: RolePermissionDto
+    ): Promise<ResponseDto<RoleEntity>> {
+        return {
+            data: await this.roleService.addPermissions(params.id, rolePermissionDto)
+        }
+    }
+
+    @Delete(':id/permissions')
+    @UsePipes(new JoiValidationPipe({ paramSchema: RoleValidation.id, bodySchema: RoleValidation.rolePermission }))
+    async deletePermissions(
+        @Param() params: { id: number },
+        @Body() rolePermissionDto: RolePermissionDto
+    ): Promise<ResponseDto<RoleEntity>> {
+        return {
+            data: await this.roleService.deletePermissions(params.id, rolePermissionDto)
         }
     }
 

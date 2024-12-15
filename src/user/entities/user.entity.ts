@@ -21,7 +21,7 @@ export class UserEntity {
     @Column({ type: 'enum', enum: Gender, default: Gender.UNKNOWN })
     gender: Gender
 
-    @ManyToMany(() => RoleEntity, (role) => role.users, { eager: true })
+    @ManyToMany(() => RoleEntity, (role) => role.users, { eager: false })
     @JoinTable({
         name: 'user_role'
     })

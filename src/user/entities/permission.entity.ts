@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { RoleEntity } from './role.entity'
 
 export enum PermissionEnum {
@@ -44,4 +44,10 @@ export class PermissionEntity {
 
     @ManyToMany(() => RoleEntity, (role) => role.permissions)
     roles: RoleEntity[]
+
+    @CreateDateColumn()
+    createdAt: Date
+
+    @UpdateDateColumn()
+    updatedAt: Date
 }
