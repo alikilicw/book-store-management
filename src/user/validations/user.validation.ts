@@ -22,4 +22,8 @@ export default class UserValidation extends BaseValidation {
         roles: Joi.array().items(Joi.number()).optional(),
         phone: Joi.string().min(5).max(20).optional()
     })
+
+    public static userRole = Joi.object({
+        roleIds: Joi.array().items(Joi.number()).required()
+    })
 }

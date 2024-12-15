@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Not, Repository } from 'typeorm'
+import { In, Not, Repository } from 'typeorm'
 import { RoleEntity, RoleEnum } from '../entities/role.entity'
 import { CreateRoleDto, FindRoleDto, RolePermissionDto, UpdateRoleDto } from '../dto/role.dto'
 import { PermissionService } from './permission.service'
@@ -32,8 +32,15 @@ export class RoleService {
     }
 
     async find(findRoleDto: FindRoleDto): Promise<RoleEntity[]> {
+        const { ids, ...filters } = findRoleDto
+
+        const query: any = filters
+        if (ids && ids.length != 0) {
+            query.id = In(ids)
+        }
+
         return this.roleRepository.find({
-            where: findRoleDto,
+            where: query,
             relations: {
                 permissions: true
             },

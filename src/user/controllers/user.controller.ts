@@ -5,7 +5,7 @@ import UserValidation from '../validations/user.validation'
 import { ResponseDto } from 'src/common/dto/response.dto'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { UserService } from '../services/user.service'
-import { FindUserDto, UpdateUserDto } from '../dto/user.dto'
+import { FindUserDto, UpdateUserDto, UserRoleDto } from '../dto/user.dto'
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -23,7 +23,7 @@ export class UserController {
     @Get(':id')
     @UsePipes(new JoiValidationPipe({ paramSchema: UserValidation.id }))
     async findOne(@Param() param: { id: number }): Promise<ResponseDto<UserEntity>> {
-        const user = await this.userService.findById(param.id)
+        const user = await this.userService.findOne({ id: param.id })
         if (!user) {
             throw new NotFoundException('User not found')
         }
@@ -37,6 +37,22 @@ export class UserController {
     async update(@Param() param: { id: number }, @Body() updateUserDto: UpdateUserDto): Promise<ResponseDto<UserEntity>> {
         return {
             data: await this.userService.update(param.id, updateUserDto)
+        }
+    }
+
+    @Patch(':id/roles')
+    @UsePipes(new JoiValidationPipe({ paramSchema: UserValidation.id, bodySchema: UserValidation.userRole }))
+    async addRoles(@Param() param: { id: number }, @Body() userRoleDto: UserRoleDto): Promise<ResponseDto<UserEntity>> {
+        return {
+            data: await this.userService.addRoles(param.id, userRoleDto)
+        }
+    }
+
+    @Delete(':id/roles')
+    @UsePipes(new JoiValidationPipe({ paramSchema: UserValidation.id, bodySchema: UserValidation.userRole }))
+    async deleteRoles(@Param() param: { id: number }, @Body() userRoleDto: UserRoleDto): Promise<ResponseDto<UserEntity>> {
+        return {
+            data: await this.userService.deleteRoles(param.id, userRoleDto)
         }
     }
 

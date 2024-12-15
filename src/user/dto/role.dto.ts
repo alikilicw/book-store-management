@@ -6,7 +6,9 @@ export type CreateRoleDto = Required<BaseRoleDto> & {
     permissionIds?: number[]
 }
 
-export type FindRoleDto = BaseRoleDto
+export type FindRoleDto = BaseRoleDto & {
+    ids: number[]
+}
 
 export type UpdateRoleDto = BaseRoleDto
 

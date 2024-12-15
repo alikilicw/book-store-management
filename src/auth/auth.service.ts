@@ -23,6 +23,8 @@ export class AuthService {
         const confirmationCode = generateRandomVerificationCode()
 
         user.confirmCode = confirmationCode
+        console.log(user)
+
         await this.userService.save(user)
 
         await this.otpService.sendMail(user.email, user.id, confirmationCode)

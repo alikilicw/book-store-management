@@ -1,5 +1,5 @@
-import { RoleEntity } from 'src/user/entities/role.entity'
-import { Gender, UserEntity } from 'src/user/entities/user.entity'
+import { CreateUserDto } from 'src/user/dto/user.dto'
+import { UserEntity } from 'src/user/entities/user.entity'
 
 type AuthReqBaseDto = {
     username: string
@@ -16,10 +16,5 @@ export type LoginResDto = AuthResBaseDto & {
     user: UserEntity
 }
 
-export type RegisterReqDto = AuthReqBaseDto & {
-    email: string
-    gender: Gender
-    roles: RoleEntity[]
-    phone: string
-}
+export type RegisterReqDto = CreateUserDto
 export type RegisterResDto = AuthResBaseDto

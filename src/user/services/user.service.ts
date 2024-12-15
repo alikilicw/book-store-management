@@ -2,13 +2,15 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UserEntity } from '../entities/user.entity'
-import { CreateUserDto, FindUserDto, UpdateUserDto } from '../dto/user.dto'
+import { CreateUserDto, FindUserDto, UpdateUserDto, UserRoleDto } from '../dto/user.dto'
+import { RoleService } from './role.service'
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(UserEntity)
-        private userRepository: Repository<UserEntity>
+        private readonly userRepository: Repository<UserEntity>,
+        private readonly roleService: RoleService
     ) {}
 
     async create(createUserDto: CreateUserDto): Promise<UserEntity> {
@@ -38,8 +40,13 @@ export class UserService {
                 this.delete(existingUser.id)
             }
         }
+        const { roleIds, ...createUser } = createUserDto
+        const newUser = this.userRepository.create(createUser)
 
-        return this.userRepository.create(createUserDto)
+        const roles = await this.roleService.find({ ids: roleIds })
+        newUser.roles = roles
+
+        return newUser
     }
 
     async findAll(): Promise<UserEntity[]> {
@@ -48,13 +55,30 @@ export class UserService {
 
     async find(findUserDto: FindUserDto): Promise<UserEntity[]> {
         return this.userRepository.find({
-            where: findUserDto
+            where: findUserDto,
+            relations: {
+                roles: {
+                    permissions: true
+                }
+            },
+            select: {
+                roles: {
+                    name: true,
+                    permissions: {
+                        name: true,
+                        description: true
+                    }
+                }
+            }
         })
     }
 
     async findOne(findUserDto: FindUserDto): Promise<UserEntity> {
         return this.userRepository.findOne({
-            where: findUserDto
+            where: findUserDto,
+            relations: {
+                roles: true
+            }
         })
     }
 
@@ -99,5 +123,36 @@ export class UserService {
         if (!user) throw new NotFoundException('User not found.')
 
         await this.userRepository.delete(id)
+    }
+
+    async addRoles(id: number, userRoleDto: UserRoleDto): Promise<UserEntity> {
+        const user = await this.userRepository.findOne({
+            where: { id },
+            relations: {
+                roles: true
+            }
+        })
+        if (!user) throw new NotFoundException('User not found.')
+
+        const rolesToAdd = await this.roleService.find({ ids: userRoleDto.roleIds })
+        const newRoles = [...user.roles, ...rolesToAdd]
+        user.roles = Array.from(new Set(newRoles.map((role) => role.id))).map((id) => newRoles.find((role) => role.id === id))
+        return await this.save(user)
+    }
+
+    async deleteRoles(id: number, userRoleDto: UserRoleDto): Promise<UserEntity> {
+        const user = await this.userRepository.findOne({
+            where: { id },
+            relations: {
+                roles: true
+            }
+        })
+        if (!user) throw new NotFoundException('User not found.')
+
+        const rolesToDelete = await this.roleService.find({
+            ids: userRoleDto.roleIds
+        })
+        user.roles = user.roles.filter((role) => !rolesToDelete.some((roleToDelete) => roleToDelete.id === role.id))
+        return await this.userRepository.save(user)
     }
 }

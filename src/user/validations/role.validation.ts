@@ -16,6 +16,6 @@ export default class RoleValidation extends BaseValidation {
     })
 
     public static rolePermission = Joi.object({
-        permissionIds: Joi.array().items(Joi.number()).optional()
+        permissionIds: Joi.array().items(Joi.number()).required()
     })
 }
