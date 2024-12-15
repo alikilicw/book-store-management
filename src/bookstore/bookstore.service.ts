@@ -12,7 +12,7 @@ export class BookStoreService {
     ) {}
 
     async create(createBookStoreDto: CreateBookStoreDto): Promise<BookStoreEntity> {
-        const bookStoreCheck = await this.findOne({ name: createBookStoreDto.name })
+        const bookStoreCheck = await this.bookstoreRepository.findOne({ where: { name: createBookStoreDto.name } })
         if (bookStoreCheck) throw new BadRequestException('There is a book store with this name.')
 
         const bookstore = this.bookstoreRepository.create(createBookStoreDto)

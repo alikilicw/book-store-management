@@ -6,8 +6,11 @@ import { ResponseDto } from 'src/common/dto/response.dto'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import { BookStoreEntity } from './bookstore.entity'
 import BookStoreValidation from './bookstore.validation'
+import { Permissions } from 'src/common/decorators/permission.decorator'
+import { PermissionEnum } from 'src/user/entities/permission.entity'
+import { AuthGuard } from '@nestjs/passport'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller('bookstores')
 export class BookStoreController {
     constructor(private readonly bookstoreService: BookStoreService) {}
@@ -21,6 +24,7 @@ export class BookStoreController {
     }
 
     @Get()
+    @Permissions(PermissionEnum.READ_BOOKSTORE)
     @UsePipes(new JoiValidationPipe({ querySchema: BookStoreValidation.find }))
     async find(@Query() findBookStoreDto: FindBookStoreDto): Promise<ResponseDto<BookStoreEntity[]>> {
         return {

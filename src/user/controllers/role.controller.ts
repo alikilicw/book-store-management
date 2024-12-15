@@ -7,7 +7,7 @@ import { RoleEntity } from '../entities/role.entity'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import RoleValidation from '../validations/role.validation'
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('roles')
 export class RoleController {
     constructor(private readonly roleService: RoleService) {}

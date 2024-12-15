@@ -7,7 +7,7 @@ import PermissionValidation from '../validations/permission.validation'
 import { PermissionEntity } from '../entities/permission.entity'
 import { CreatePermissionDto, FindPermissionDto, UpdatePermissionDto } from '../dto/permission.dto'
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('permissions')
 export class PermissionController {
     constructor(private readonly permissionService: PermissionService) {}

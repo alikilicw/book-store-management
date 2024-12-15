@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { Constants } from 'src/common/constants.config'
+import { UserEntity } from 'src/user/entities/user.entity'
 import { UserService } from 'src/user/services/user.service'
 
 @Injectable()
@@ -14,9 +15,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         })
     }
 
-    async validate(payload: any) {
+    async validate(payload: any): Promise<UserEntity> {
         const user = await this.userService.findById(payload.id, 'confirmCode')
         if (user.isActive) delete user.confirmCode
+        console.log('CCC')
 
         return user
     }
