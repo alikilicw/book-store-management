@@ -1,5 +1,5 @@
 import * as Joi from 'joi'
-import { Gender, UserRole } from 'src/user/user.entity'
+import { Gender } from 'src/user/entities/user.entity'
 
 export default class AuthValidation {
     public static register = Joi.object({
@@ -9,9 +9,7 @@ export default class AuthValidation {
             .valid(...Object.values(Gender))
             .required(),
         phone: Joi.string().min(5).max(20).required(),
-        role: Joi.array()
-            .items(Joi.string().valid(...Object.values(UserRole)))
-            .required(),
+        roleId: Joi.array().items(Joi.number()).required(),
         password: Joi.string().min(5).max(20).required()
     })
 

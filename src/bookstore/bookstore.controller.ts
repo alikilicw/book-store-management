@@ -6,11 +6,8 @@ import { ResponseDto } from 'src/common/dto/response.dto'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import { BookStoreEntity } from './bookstore.entity'
 import BookStoreValidation from './bookstore.validation'
-import { RolesGuard } from 'src/common/guards/roles.guard'
-import { Roles } from 'src/common/decorators/role.decorator'
-import { UserRole } from 'src/user/user.entity'
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('bookstores')
 export class BookStoreController {
     constructor(private readonly bookstoreService: BookStoreService) {}
@@ -24,7 +21,6 @@ export class BookStoreController {
     }
 
     @Get()
-    @Roles(UserRole.ADMIN)
     @UsePipes(new JoiValidationPipe({ querySchema: BookStoreValidation.find }))
     async find(@Query() findBookStoreDto: FindBookStoreDto): Promise<ResponseDto<BookStoreEntity[]>> {
         return {

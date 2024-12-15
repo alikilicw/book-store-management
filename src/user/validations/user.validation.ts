@@ -1,6 +1,6 @@
 import * as Joi from 'joi'
 import BaseValidation from 'src/common/base.validation'
-import { Gender, UserRole } from './user.entity'
+import { Gender } from '../entities/user.entity'
 
 export default class UserValidation extends BaseValidation {
     public static find = Joi.object({
@@ -9,9 +9,7 @@ export default class UserValidation extends BaseValidation {
         gender: Joi.string()
             .valid(...Object.values(Gender))
             .optional(),
-        role: Joi.array()
-            .items(Joi.string().valid(...Object.values(UserRole)))
-            .optional(),
+        roles: Joi.array().items(Joi.number()).optional(),
         phone: Joi.string().min(5).max(20).optional()
     })
 
@@ -21,9 +19,7 @@ export default class UserValidation extends BaseValidation {
         gender: Joi.string()
             .valid(...Object.values(Gender))
             .optional(),
-        role: Joi.array()
-            .items(Joi.string().valid(...Object.values(UserRole)))
-            .optional(),
+        roles: Joi.array().items(Joi.number()).optional(),
         phone: Joi.string().min(5).max(20).optional()
     })
 }

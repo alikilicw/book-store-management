@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Param, Body, NotFoundException, Query, UsePipes, Patch, Delete, UseGuards } from '@nestjs/common'
-import { UserService } from './user.service'
-import { UserEntity } from './user.entity'
-import { FindUserDto, UpdateUserDto } from './user.dto'
+import { UserEntity } from '../entities/user.entity'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
-import UserValidation from './user.validation'
+import UserValidation from '../validations/user.validation'
 import { ResponseDto } from 'src/common/dto/response.dto'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
+import { UserService } from '../services/user.service'
+import { FindUserDto, UpdateUserDto } from '../dto/user.dto'
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')

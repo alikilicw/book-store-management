@@ -1,15 +1,10 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { RoleEntity } from './role.entity'
 
 export enum Gender {
     MALE = 'male',
     FEMALE = 'female',
     UNKNOWN = 'unknown'
-}
-
-export enum UserRole {
-    USER = 'user',
-    MANAGER = 'manager',
-    ADMIN = 'admin'
 }
 
 @Entity('users')
@@ -26,8 +21,11 @@ export class UserEntity {
     @Column({ type: 'enum', enum: Gender, default: Gender.UNKNOWN })
     gender: Gender
 
-    @Column({ type: 'enum', enum: UserRole, array: true, default: [UserRole.USER] })
-    role: UserRole[]
+    @ManyToMany(() => RoleEntity, (role) => role.users, { eager: true })
+    @JoinTable({
+        name: 'user_roles'
+    })
+    roles: RoleEntity[]
 
     @Column({ unique: true })
     phone: string

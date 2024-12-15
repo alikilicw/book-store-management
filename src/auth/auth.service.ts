@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
-import { UserEntity } from 'src/user/user.entity'
+import { UserEntity } from 'src/user/entities/user.entity'
 import { LoginReqDto, LoginResDto, RegisterReqDto, RegisterResDto } from './auth.dto'
 import { sign } from 'jsonwebtoken'
 import { Constants } from 'src/common/constants.config'
 import { hash, compare } from 'bcrypt'
-import { UserService } from 'src/user/user.service'
 import { OtpService } from 'src/auth/otp/otp.service'
 import generateRandomVerificationCode from 'src/common/util/generate-code'
+import { UserService } from 'src/user/services/user.service'
 
 @Injectable()
 export class AuthService {
