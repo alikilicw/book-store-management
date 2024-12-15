@@ -10,9 +10,10 @@ import { RoleEntity } from './entities/role.entity'
 import { PermissionController } from './controllers/permission.controller'
 import { PermissionService } from './services/permission.service'
 import { PermissionEntity } from './entities/permission.entity'
+import { CommonModule } from 'src/common/common.module'
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserEntity, RoleEntity, PermissionEntity]), forwardRef(() => AuthModule)],
+    imports: [TypeOrmModule.forFeature([UserEntity, RoleEntity, PermissionEntity]), forwardRef(() => AuthModule), CommonModule],
     controllers: [UserController, RoleController, PermissionController],
     providers: [UserService, RoleService, PermissionService],
     exports: [UserService, PermissionService, RoleService]

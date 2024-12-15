@@ -14,19 +14,15 @@ export class PermissionsGuard implements CanActivate {
         }
 
         const request = context.switchToHttp().getRequest()
-        // if (!request.user) return true
         const user = request.user
 
-        console.log(user, 'uysers')
+        const userPermissions = user.roles.map((role: RoleEntity) => role.permissions.map((perm: PermissionEntity) => perm.name))
 
-        // const userPermissions = user.roles.map((role: RoleEntity) => role.permissions.map((perm: PermissionEntity) => perm.name))
+        const hasPermission = requiredPermissions.every((perm) => userPermissions.includes(perm))
 
-        // const hasPermission = requiredPermissions.every((perm) => userPermissions.includes(perm))
-        // console.log(hasPermission, 'AAA')
-
-        // if (!hasPermission) {
-        //     throw new ForbiddenException('You do not have the required permissions')
-        // }
+        if (!hasPermission) {
+            throw new ForbiddenException('You do not have the required permissions')
+        }
 
         return true
     }

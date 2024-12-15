@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { UserEntity } from '../entities/user.entity'
+import { UserEntity, UserSelectFalse } from '../entities/user.entity'
 import { CreateUserDto, FindUserDto, UpdateUserDto, UserRoleDto } from '../dto/user.dto'
 import { RoleService } from './role.service'
 
@@ -86,6 +86,9 @@ export class UserService {
         const query = this.userRepository.createQueryBuilder('user').where('user.id = :id', { id })
 
         if (addSelect) query.addSelect(`user.${addSelect}`)
+
+        query.leftJoinAndSelect(`user.roles`, 'roles')
+        query.leftJoinAndSelect('roles.permissions', 'permissions')
 
         return query.getOne()
     }

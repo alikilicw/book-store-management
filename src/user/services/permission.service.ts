@@ -15,7 +15,7 @@ export class PermissionService {
         const permissionCheck = await this.permissionRepository.findOne({ where: { name: createPermissionDto.name } })
         if (permissionCheck) throw new BadRequestException('There is a permission with this name.')
 
-        if (!(createPermissionDto.name in Object.values(PermissionEnum)))
+        if (!Object.values(PermissionEnum).some((role) => role == createPermissionDto.name))
             throw new BadRequestException('Please first add this permission into PermissionEnum.')
 
         const permission = this.permissionRepository.create(createPermissionDto)

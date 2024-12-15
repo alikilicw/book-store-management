@@ -1,4 +1,4 @@
-import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
+import { ArgumentMetadata, BadRequestException, PipeTransform } from '@nestjs/common'
 import { ObjectSchema } from 'joi'
 
 type ValidationConstructor = {
@@ -7,7 +7,6 @@ type ValidationConstructor = {
     paramSchema?: ObjectSchema | null
 }
 
-@Injectable()
 export class JoiValidationPipe implements PipeTransform {
     private bodySchema: ObjectSchema
     private querySchema: ObjectSchema

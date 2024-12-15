@@ -6,13 +6,17 @@ import { CreateRoleDto, FindRoleDto, RolePermissionDto, UpdateRoleDto } from '..
 import { RoleEntity } from '../entities/role.entity'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import RoleValidation from '../validations/role.validation'
+import { PermissionsGuard } from 'src/common/guards/permission.guard'
+import { Permissions } from 'src/common/decorators/permission.decorator'
+import { PermissionEnum } from '../entities/permission.entity'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('roles')
 export class RoleController {
     constructor(private readonly roleService: RoleService) {}
 
     @Post()
+    @Permissions(PermissionEnum.CREATE_ROLE)
     @UsePipes(new JoiValidationPipe({ bodySchema: RoleValidation.create }))
     async create(@Body() createRoleDto: CreateRoleDto): Promise<ResponseDto<RoleEntity>> {
         return {
@@ -21,6 +25,7 @@ export class RoleController {
     }
 
     @Get()
+    @Permissions(PermissionEnum.READ_ROLE)
     @UsePipes(new JoiValidationPipe({ querySchema: RoleValidation.find }))
     async find(@Query() findRoleDto: FindRoleDto): Promise<ResponseDto<RoleEntity[]>> {
         return {
@@ -29,6 +34,7 @@ export class RoleController {
     }
 
     @Get(':id')
+    @Permissions(PermissionEnum.READ_ROLE)
     @UsePipes(new JoiValidationPipe({ paramSchema: RoleValidation.id }))
     async findOne(@Param() params: { id: number }): Promise<ResponseDto<RoleEntity>> {
         return {
@@ -37,6 +43,7 @@ export class RoleController {
     }
 
     @Patch(':id')
+    @Permissions(PermissionEnum.UPDATE_ROLE)
     @UsePipes(new JoiValidationPipe({ paramSchema: RoleValidation.id, bodySchema: RoleValidation.update }))
     async update(@Param() params: { id: number }, @Body() updateRoleDto: UpdateRoleDto): Promise<ResponseDto<RoleEntity>> {
         return {
@@ -67,6 +74,7 @@ export class RoleController {
     }
 
     @Delete(':id')
+    @Permissions(PermissionEnum.DELETE_ROLE)
     @UsePipes(new JoiValidationPipe({ paramSchema: RoleValidation.id }))
     async delete(@Param() params: { id: number }): Promise<void> {
         return this.roleService.delete(params.id)

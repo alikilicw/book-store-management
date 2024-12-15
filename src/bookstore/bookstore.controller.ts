@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query, UsePipes, Patch } from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Query, UsePipes, Patch } from '@nestjs/common'
 import { BookStoreService } from './bookstore.service'
 import { CreateBookStoreDto, FindBookStoreDto, UpdateBookStoreDto } from './bookstore.dto'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
@@ -8,14 +8,15 @@ import { BookStoreEntity } from './bookstore.entity'
 import BookStoreValidation from './bookstore.validation'
 import { Permissions } from 'src/common/decorators/permission.decorator'
 import { PermissionEnum } from 'src/user/entities/permission.entity'
-import { AuthGuard } from '@nestjs/passport'
+import { PermissionsGuard } from 'src/common/guards/permission.guard'
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('bookstores')
 export class BookStoreController {
     constructor(private readonly bookstoreService: BookStoreService) {}
 
     @Post()
+    @Permissions(PermissionEnum.CREATE_BOOKSTORE)
     @UsePipes(new JoiValidationPipe({ bodySchema: BookStoreValidation.create }))
     async create(@Body() createBookStoreDto: CreateBookStoreDto): Promise<ResponseDto<BookStoreEntity>> {
         return {
@@ -33,6 +34,7 @@ export class BookStoreController {
     }
 
     @Get(':id')
+    @Permissions(PermissionEnum.READ_BOOKSTORE)
     @UsePipes(new JoiValidationPipe({ paramSchema: BookStoreValidation.id }))
     async findOne(@Param() params: { id: number }): Promise<ResponseDto<BookStoreEntity>> {
         return {
@@ -41,6 +43,7 @@ export class BookStoreController {
     }
 
     @Patch(':id')
+    @Permissions(PermissionEnum.UPDATE_BOOKSTORE)
     @UsePipes(new JoiValidationPipe({ paramSchema: BookStoreValidation.id, bodySchema: BookStoreValidation.update }))
     async update(
         @Param() params: { id: number },
@@ -52,6 +55,7 @@ export class BookStoreController {
     }
 
     @Delete(':id')
+    @Permissions(PermissionEnum.DELETE_BOOKSTORE)
     @UsePipes(new JoiValidationPipe({ paramSchema: BookStoreValidation.id }))
     async delete(@Param() params: { id: number }): Promise<void> {
         return this.bookstoreService.delete(params.id)

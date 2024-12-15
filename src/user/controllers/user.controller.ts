@@ -6,13 +6,17 @@ import { ResponseDto } from 'src/common/dto/response.dto'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { UserService } from '../services/user.service'
 import { FindUserDto, UpdateUserDto, UserRoleDto } from '../dto/user.dto'
+import { PermissionsGuard } from 'src/common/guards/permission.guard'
+import { Permissions } from 'src/common/decorators/permission.decorator'
+import { PermissionEnum } from '../entities/permission.entity'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
+    @Permissions(PermissionEnum.CREATE_USER)
     @UsePipes(new JoiValidationPipe({ querySchema: UserValidation.find }))
     async find(@Query() findUserDto: FindUserDto): Promise<ResponseDto<UserEntity[]>> {
         return {
@@ -21,9 +25,10 @@ export class UserController {
     }
 
     @Get(':id')
+    @Permissions(PermissionEnum.READ_USER)
     @UsePipes(new JoiValidationPipe({ paramSchema: UserValidation.id }))
     async findOne(@Param() param: { id: number }): Promise<ResponseDto<UserEntity>> {
-        const user = await this.userService.findOne({ id: param.id })
+        const user = await this.userService.findById(param.id)
         if (!user) {
             throw new NotFoundException('User not found')
         }
@@ -33,6 +38,7 @@ export class UserController {
     }
 
     @Patch(':id')
+    @Permissions(PermissionEnum.UPDATE_USER)
     @UsePipes(new JoiValidationPipe({ paramSchema: UserValidation.id, bodySchema: UserValidation.update }))
     async update(@Param() param: { id: number }, @Body() updateUserDto: UpdateUserDto): Promise<ResponseDto<UserEntity>> {
         return {
@@ -57,6 +63,7 @@ export class UserController {
     }
 
     @Delete(':id')
+    @Permissions(PermissionEnum.DELETE_USER)
     @UsePipes(new JoiValidationPipe({ paramSchema: UserValidation.id }))
     async delete(@Param() params: { id: number }): Promise<void> {
         await this.userService.delete(params.id)

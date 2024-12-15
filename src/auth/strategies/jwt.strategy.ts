@@ -17,8 +17,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(payload: any): Promise<UserEntity> {
         const user = await this.userService.findById(payload.id, 'confirmCode')
+
         if (user.isActive) delete user.confirmCode
-        console.log('CCC')
 
         return user
     }

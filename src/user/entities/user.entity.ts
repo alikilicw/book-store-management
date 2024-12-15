@@ -7,6 +7,11 @@ export enum Gender {
     UNKNOWN = 'unknown'
 }
 
+export type UserSelectFalse = {
+    confirmCode?: boolean
+    password?: boolean
+}
+
 @Entity('users')
 export class UserEntity {
     @PrimaryGeneratedColumn()

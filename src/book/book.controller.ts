@@ -6,13 +6,17 @@ import BookValidation from './book.validation'
 import { ResponseDto } from 'src/common/dto/response.dto'
 import { BookEntity } from './book.entity'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
+import { PermissionsGuard } from 'src/common/guards/permission.guard'
+import { Permissions } from 'src/common/decorators/permission.decorator'
+import { PermissionEnum } from 'src/user/entities/permission.entity'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('books')
 export class BookController {
     constructor(private readonly bookService: BookService) {}
 
     @Post()
+    @Permissions(PermissionEnum.CREATE_BOOK)
     @UsePipes(new JoiValidationPipe({ bodySchema: BookValidation.create }))
     async create(@Body() createBookDto: CreateBookDto): Promise<ResponseDto<BookEntity>> {
         return {
@@ -21,6 +25,7 @@ export class BookController {
     }
 
     @Get()
+    @Permissions(PermissionEnum.READ_BOOK)
     @UsePipes(new JoiValidationPipe({ querySchema: BookValidation.find }))
     async find(@Query() findBookDto: FindBookDto): Promise<ResponseDto<BookEntity[]>> {
         return {
@@ -29,6 +34,7 @@ export class BookController {
     }
 
     @Get(':id')
+    @Permissions(PermissionEnum.READ_BOOK)
     @UsePipes(new JoiValidationPipe({ paramSchema: BookValidation.id }))
     async findOne(@Param() params: { id: number }): Promise<ResponseDto<BookEntity>> {
         return {
@@ -37,6 +43,7 @@ export class BookController {
     }
 
     @Patch(':id')
+    @Permissions(PermissionEnum.UPDATE_BOOK)
     @UsePipes(new JoiValidationPipe({ paramSchema: BookValidation.id, bodySchema: BookValidation.update }))
     async update(@Param() params: { id: number }, @Body() updateBookDto: UpdateBookDto): Promise<ResponseDto<BookEntity>> {
         return {
@@ -45,6 +52,7 @@ export class BookController {
     }
 
     @Delete(':id')
+    @Permissions(PermissionEnum.DELETE_BOOK)
     @UsePipes(new JoiValidationPipe({ paramSchema: BookValidation.id }))
     async delete(@Param() params: { id: number }): Promise<void> {
         return this.bookService.delete(params.id)
