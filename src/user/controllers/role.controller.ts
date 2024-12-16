@@ -52,6 +52,7 @@ export class RoleController {
     }
 
     @Patch(':id/permissions')
+    @Permissions(PermissionEnum.ADD_PERMISSION_TO_ROLE)
     @UsePipes(new JoiValidationPipe({ paramSchema: RoleValidation.id, bodySchema: RoleValidation.rolePermission }))
     async addPermissions(
         @Param() params: { id: number },
@@ -63,6 +64,7 @@ export class RoleController {
     }
 
     @Delete(':id/permissions')
+    @Permissions(PermissionEnum.DELETE_PERMISSION_FROM_ROLE)
     @UsePipes(new JoiValidationPipe({ paramSchema: RoleValidation.id, bodySchema: RoleValidation.rolePermission }))
     async deletePermissions(
         @Param() params: { id: number },

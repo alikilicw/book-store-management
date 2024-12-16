@@ -29,6 +29,7 @@ export enum PermissionEnum {
     READ_BOOK = 'read_book',
     UPDATE_BOOK = 'update_book',
     DELETE_BOOK = 'delete_book',
+    READ_BOOKSTORES_INCLUDES_BOOK = 'read_bookstores_includes_book',
 
     // BookStore Permissions
     CREATE_BOOKSTORE = 'create_bookstore',

@@ -4,12 +4,13 @@ import { BookController } from './book.controller'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { BookEntity } from './book.entity'
 import { AuthModule } from 'src/auth/auth.module'
-import { BookStoreModule } from 'src/bookstore/bookstore.module'
 import { CommonModule } from 'src/common/common.module'
+import { BookStoreModule } from 'src/bookstore/bookstore.module'
 
 @Module({
-    imports: [TypeOrmModule.forFeature([BookEntity]), BookStoreModule, AuthModule, CommonModule],
+    imports: [TypeOrmModule.forFeature([BookEntity]), AuthModule, CommonModule, forwardRef(() => BookStoreModule)],
     controllers: [BookController],
-    providers: [BookService]
+    providers: [BookService],
+    exports: [BookService]
 })
 export class BookModule {}

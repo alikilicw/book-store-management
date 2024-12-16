@@ -30,7 +30,7 @@ export class PermissionService {
         const { ids, ...filters } = findPermissionDto
 
         const query: any = filters
-        if (ids && ids.length != 0) {
+        if (ids) {
             query.id = In(ids)
         }
 

@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { BookEntity } from './book.entity'
 import { CreateBookDto, FindBookDto, UpdateBookDto } from './book.dto'
 import { BookStoreService } from 'src/bookstore/bookstore.service'
@@ -10,6 +10,7 @@ export class BookService {
     constructor(
         @InjectRepository(BookEntity)
         private readonly bookRepository: Repository<BookEntity>,
+        @Inject(forwardRef(() => BookStoreService))
         private readonly bookStoreService: BookStoreService
     ) {}
 
@@ -17,12 +18,7 @@ export class BookService {
         const bookCheck = await this.bookRepository.findOne({ where: { name: createBookDto.name } })
         if (bookCheck) throw new BadRequestException('There is a book with this name.')
 
-        const bookStore = await this.bookStoreService.findById(createBookDto.bookStoreId)
-
-        const book = this.bookRepository.create(createBookDto)
-        book.bookstore = bookStore
-
-        return this.bookRepository.save(book)
+        return this.bookRepository.save(createBookDto)
     }
 
     async findAll(): Promise<BookEntity[]> {
@@ -30,23 +26,26 @@ export class BookService {
     }
 
     async find(findBookDto: FindBookDto): Promise<BookEntity[]> {
+        const { ids, ...filters } = findBookDto
+
+        const query: any = filters
+        if (ids) {
+            query.id = In(ids)
+        }
         return this.bookRepository.find({
-            where: findBookDto,
-            relations: {
-                bookstore: true
-            }
+            where: query
         })
     }
 
     async findOne(bookFindDto: FindBookDto): Promise<BookEntity> {
-        const book = await this.bookRepository.findOne({ where: bookFindDto, relations: { bookstore: true } })
+        const book = await this.bookRepository.findOne({ where: bookFindDto })
         if (!book) throw new NotFoundException('Book not found.')
 
         return book
     }
 
     async findById(id: number): Promise<BookEntity> {
-        const book = await this.bookRepository.findOne({ where: { id }, relations: { bookstore: true } })
+        const book = await this.bookRepository.findOne({ where: { id } })
         if (!book) throw new NotFoundException('Book not found.')
 
         return book
@@ -69,5 +68,14 @@ export class BookService {
         if (!book) throw new NotFoundException('Book not found.')
 
         await this.bookRepository.delete(id)
+    }
+
+    async getAvaliableBookStores(id: number) {
+        const book = await this.findById(id)
+
+        const bookStores = await this.bookStoreService.find()
+        const availableBookStores = bookStores.filter((store) => store.books.some((b) => b.id === book.id))
+
+        return availableBookStores
     }
 }

@@ -43,7 +43,7 @@ export class UserService {
         const { roleIds, ...createUser } = createUserDto
         const newUser = this.userRepository.create(createUser)
 
-        const roles = await this.roleService.find({ ids: roleIds })
+        const roles = await this.roleService.find({ ids: roleIds ?? [] })
         newUser.roles = roles
 
         return newUser
@@ -137,7 +137,7 @@ export class UserService {
         })
         if (!user) throw new NotFoundException('User not found.')
 
-        const rolesToAdd = await this.roleService.find({ ids: userRoleDto.roleIds })
+        const rolesToAdd = await this.roleService.find({ ids: userRoleDto.roleIds ?? [] })
         const newRoles = [...user.roles, ...rolesToAdd]
         user.roles = Array.from(new Set(newRoles.map((role) => role.id))).map((id) => newRoles.find((role) => role.id === id))
         return await this.save(user)
@@ -153,7 +153,7 @@ export class UserService {
         if (!user) throw new NotFoundException('User not found.')
 
         const rolesToDelete = await this.roleService.find({
-            ids: userRoleDto.roleIds
+            ids: userRoleDto.roleIds ?? []
         })
         user.roles = user.roles.filter((role) => !rolesToDelete.some((roleToDelete) => roleToDelete.id === role.id))
         return await this.userRepository.save(user)

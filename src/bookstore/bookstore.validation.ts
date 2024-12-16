@@ -13,4 +13,8 @@ export default class BookStoreValidation extends BaseValidation {
     public static update = Joi.object({
         name: Joi.string().min(5).max(20).optional()
     })
+
+    public static addDeleteToFromBookStore = Joi.object({
+        bookIds: Joi.array().items(Joi.number()).required()
+    })
 }

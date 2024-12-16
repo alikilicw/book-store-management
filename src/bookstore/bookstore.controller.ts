@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Delete, UseGuards, Query, UsePipes, Patch } from '@nestjs/common'
 import { BookStoreService } from './bookstore.service'
-import { CreateBookStoreDto, FindBookStoreDto, UpdateBookStoreDto } from './bookstore.dto'
+import { AddDeleteBooksToFromBookStoreDto, CreateBookStoreDto, FindBookStoreDto, UpdateBookStoreDto } from './bookstore.dto'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { ResponseDto } from 'src/common/dto/response.dto'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
@@ -51,6 +51,34 @@ export class BookStoreController {
     ): Promise<ResponseDto<BookStoreEntity>> {
         return {
             data: await this.bookstoreService.update(params.id, updateBookStoreDto)
+        }
+    }
+
+    @Patch(':id/books')
+    @Permissions(PermissionEnum.ADD_BOOK_TO_BOOKSTORE)
+    @UsePipes(
+        new JoiValidationPipe({ paramSchema: BookStoreValidation.id, bodySchema: BookStoreValidation.addDeleteToFromBookStore })
+    )
+    async addBooks(
+        @Param() params: { id: number },
+        @Body() addBooksToBookStoreDto: AddDeleteBooksToFromBookStoreDto
+    ): Promise<ResponseDto<BookStoreEntity>> {
+        return {
+            data: await this.bookstoreService.addBooks(params.id, addBooksToBookStoreDto)
+        }
+    }
+
+    @Delete(':id/books')
+    @Permissions(PermissionEnum.ADD_BOOK_TO_BOOKSTORE)
+    @UsePipes(
+        new JoiValidationPipe({ paramSchema: BookStoreValidation.id, bodySchema: BookStoreValidation.addDeleteToFromBookStore })
+    )
+    async deleteBooks(
+        @Param() params: { id: number },
+        @Body() deleteBooksFromBookStoreDto: AddDeleteBooksToFromBookStoreDto
+    ): Promise<ResponseDto<BookStoreEntity>> {
+        return {
+            data: await this.bookstoreService.deleteBooks(params.id, deleteBooksFromBookStoreDto)
         }
     }
 

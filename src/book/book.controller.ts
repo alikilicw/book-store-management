@@ -9,6 +9,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 import { PermissionsGuard } from 'src/common/guards/permission.guard'
 import { Permissions } from 'src/common/decorators/permission.decorator'
 import { PermissionEnum } from 'src/user/entities/permission.entity'
+import { BookStoreEntity } from 'src/bookstore/bookstore.entity'
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('books')
@@ -56,5 +57,14 @@ export class BookController {
     @UsePipes(new JoiValidationPipe({ paramSchema: BookValidation.id }))
     async delete(@Param() params: { id: number }): Promise<void> {
         return this.bookService.delete(params.id)
+    }
+
+    @Get(':id/bookstores')
+    @Permissions(PermissionEnum.READ_BOOK)
+    @UsePipes(new JoiValidationPipe({ paramSchema: BookValidation.id }))
+    async getAvaliableBookStores(@Param() params: { id: number }): Promise<ResponseDto<BookStoreEntity[]>> {
+        return {
+            data: await this.bookService.getAvaliableBookStores(params.id)
+        }
     }
 }

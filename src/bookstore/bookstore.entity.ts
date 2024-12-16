@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { BookEntity } from 'src/book/book.entity'
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('bookstores')
 export class BookStoreEntity {
@@ -14,6 +15,9 @@ export class BookStoreEntity {
     @UpdateDateColumn()
     updatedAt: Date
 
-    // @OneToMany(() => ProductEntity, (product) => product.category)
-    // products: ProductEntity[]
+    @ManyToMany(() => BookEntity, (book) => book.bookstores, { eager: false })
+    @JoinTable({
+        name: 'bookstore_books'
+    })
+    books: BookEntity[]
 }

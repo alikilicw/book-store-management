@@ -1,5 +1,16 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    JoinTable,
+    ManyToMany,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from 'typeorm'
 import { BookStoreEntity } from 'src/bookstore/bookstore.entity'
+import { PermissionEntity } from 'src/user/entities/permission.entity'
 
 @Entity('books')
 export class BookEntity {
@@ -9,9 +20,8 @@ export class BookEntity {
     @Column()
     name: string
 
-    @ManyToOne(() => BookStoreEntity)
-    @JoinColumn({ name: 'bookstore' })
-    bookstore: BookStoreEntity
+    @ManyToMany(() => BookStoreEntity, (bookstore) => bookstore.books)
+    bookstores: BookStoreEntity[]
 
     @Column()
     price: number

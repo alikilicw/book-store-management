@@ -4,7 +4,6 @@ import { AuthService } from './auth.service'
 import { JoiValidationPipe } from 'src/common/pipes/validation.pipe'
 import AuthValidation from './auth.validation'
 import { ResponseDto } from 'src/common/dto/response.dto'
-import { AuthGuard } from '@nestjs/passport'
 import { UserEntity } from 'src/user/entities/user.entity'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard'
 

@@ -20,7 +20,7 @@ export class RoleService {
         if (!Object.values(RoleEnum).some((role) => role == createRoleDto.name))
             throw new BadRequestException('Please first add this role into RoleEnum.')
 
-        const permissions = await this.permissionService.find({ ids: createRoleDto.permissionIds })
+        const permissions = await this.permissionService.find({ ids: createRoleDto.permissionIds ?? [] })
 
         const role = this.roleRepository.create(createRoleDto)
         role.permissions = permissions
@@ -35,7 +35,7 @@ export class RoleService {
         const { ids, ...filters } = findRoleDto
 
         const query: any = filters
-        if (ids && ids.length != 0) {
+        if (ids) {
             query.id = In(ids)
         }
 
@@ -96,7 +96,7 @@ export class RoleService {
         })
         if (!role) throw new NotFoundException('Role not found.')
 
-        const permissionsToAdd = await this.permissionService.find({ ids: rolePermissionDto.permissionIds })
+        const permissionsToAdd = await this.permissionService.find({ ids: rolePermissionDto.permissionIds ?? [] })
         const newPermissions = [...role.permissions, ...permissionsToAdd]
         role.permissions = Array.from(new Set(newPermissions.map((permission) => permission.id))).map((id) =>
             newPermissions.find((permission) => permission.id === id)
@@ -115,7 +115,7 @@ export class RoleService {
         if (!role) throw new NotFoundException('Role not found.')
 
         const permissionsToDelete = await this.permissionService.find({
-            ids: rolePermissionDto.permissionIds
+            ids: rolePermissionDto.permissionIds ?? []
         })
         role.permissions = role.permissions.filter(
             (permission) => !permissionsToDelete.some((permissionToDelete) => permissionToDelete.id === permission.id)
